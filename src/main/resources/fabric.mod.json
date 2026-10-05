@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 1,
+  "id": "skyboxify",
+  "version": "${version}",
+  "name": "SkyBoxer",
+  "description": "make 3d ingame screenshots to use as a skybox/background",
+  "custom": {
+    "modmenu": {
+      "links": {
+        "modmenu.discord": "https://dc.aircrafter.cloud",
+        "modmenu.youtube": "https://www.youtube.com/@aaircrafter",
+        "modmenu.source": "https://github.com/AAirCrafter/zaheer",
+        "modmenu.modrinth": "https://modrinth.com/mod/dont-unsneak",
+        "PlanetMC": "https://www.planetminecraft.com/"
+      },
+      "update_checker": true
+    }
+  },
+  "contact": {
+    "homepage": "https://aircrafter.cloud",
+    "issues": "https://github.com/aircordteam/zaheer-issues"
+  },
+  "authors": [
+    "AAirCrafter",
+    "Demmdo"
+  ],
+  "license": "All-Rights-Reserved",
+  "icon": "assets/skyboxify/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "fabric-datagen": [
+      "air.skyboxify.client.SkyboxifyDataGenerator"
+    ],
+    "client": [
+      "air.skyboxify.client.SkyboxifyClient"
+    ],
+    "main": [
+      "air.skyboxify.Skyboxify"
+    ]
+  },
+  "mixins": [
+    "skyboxify.mixins.json",
+    {
+      "config": "skyboxify.client.mixins.json",
+      "environment": "client"
+    }
+  ],
+  "modmenu": [
+    "air.skyboxify.client.ModMenuConfig"
+  ],
+  "depends": {
+    "fabricloader": "*",
+    "fabric-api": "*",
+    "minecraft": "${minecraft_version}"
+  }
+}
