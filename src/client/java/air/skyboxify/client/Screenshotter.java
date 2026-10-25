@@ -66,7 +66,6 @@ public class Screenshotter {
         int ss = supersample(Math.max(w,h));
         int oS = window.getScaleFactor();
 
-        client.gameRenderer.setBlockOutlineEnabled(false);
         try {
             window.setFramebufferWidth(w * ss);
             window.setFramebufferHeight(h * ss);
@@ -85,7 +84,6 @@ public class Screenshotter {
             window.setFramebufferHeight(oH);
             window.setScaleFactor(oS);
             framebuffer.resize(oW, oH);
-            client.gameRenderer.setBlockOutlineEnabled(true);
         }
 
         Text link = Text.literal(name).formatted(Formatting.UNDERLINE).styled(s -> s.withClickEvent(new ClickEvent.OpenFile(new File(dir,"screenshots/" + name))));
@@ -93,11 +91,15 @@ public class Screenshotter {
                 .append(Text.translatable("screenshot.success",link).withColor(0xFFFFFF)),false);
     }
 
-    public static int supersample(Integer size) {
-        return size != null ? Math.max(1, Math.min(4, 8192 / Config.quality)) : Config.quality;
+    public static int supersample() {
+        return supersample(Config.quality);
+    }
+
+    public static int supersample(int size) {
+        return Math.max(1, Math.min(4, 8192 / size));
     }
 
     public static int renderSize() {
-        return Config.quality * supersample(null);
+        return Config.quality * supersample();
     }
 }

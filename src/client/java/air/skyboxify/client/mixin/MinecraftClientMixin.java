@@ -21,7 +21,7 @@ public class MinecraftClientMixin {
 
     @ModifyArg(method = "takePanorama", at = @At(value = "INVOKE", target = SAVE), index = 3)
     private int air$panoramaDownscale(int original) {
-        return Screenshotter.panoramaFolder == null ? original : Screenshotter.supersample(null);
+        return Screenshotter.panoramaFolder == null ? original : Screenshotter.supersample();
     }
 
     @ModifyConstant(method = "takePanorama", constant = @Constant(intValue = 4096))

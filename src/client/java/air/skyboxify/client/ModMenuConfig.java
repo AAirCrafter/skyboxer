@@ -44,7 +44,7 @@ public class ModMenuConfig implements ModMenuApi {
 
         general.addEntry(
                 entryBuilder.startBooleanToggle(Text.literal("Render UI (2D)"), renderUI)
-                        .setDefaultValue(false)
+                        .setDefaultValue(true)
                         .setSaveConsumer(value -> renderUI = value)
                         .build()
         );
