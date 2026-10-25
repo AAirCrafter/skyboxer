@@ -22,7 +22,7 @@ public class ModMenuConfig implements ModMenuApi {
         ConfigEntryBuilder entryBuilder = builder.entryBuilder();
 
         general.addEntry(
-                entryBuilder.startIntSlider(Text.literal("Quality"), quality, 360, 3000)
+                entryBuilder.startIntField(Text.literal("Quality"), quality)
                         .setDefaultValue(1080)
                         .setSaveConsumer(value -> quality = value)
                         .build()

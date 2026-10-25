@@ -2,10 +2,14 @@ package air.skyboxify.client;
 
 import air.skyboxify.Config;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gl.Framebuffer;
+import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.client.util.ScreenshotRecorder;
+import net.minecraft.client.util.Window;
 import net.minecraft.text.ClickEvent;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
@@ -40,20 +44,49 @@ public class Screenshotter {
         client.player.setYaw(yaw);
 
         Text link = Text.literal(name).formatted(Formatting.UNDERLINE).styled(s -> s.withClickEvent(new ClickEvent.OpenFile(folder.getAbsolutePath())));
-        client.player.sendMessage(Text.translatable("screenshot.success",link),false);
+        client.player.sendMessage(Text.literal("[Skyboxer] ").withColor(0x9ac2e7)
+                .append(Text.translatable("screenshot.success",link).withColor(0xFFFFFF)),false);
     }
 
     public static void shoot() {
         MinecraftClient client = MinecraftClient.getInstance();
+        if (client.player == null) return;
 
-        ScreenshotRecorder.takeScreenshot(client.getFramebuffer(), image -> {
-            try (image) {
-                image.writeTo(new File("screenshot.png"));
-            } catch (IOException e) {
-                e.printStackTrace();
-                return;
-            }
-        });
-        if (client.player != null) client.player.sendMessage(Text.literal("Screenshot saved!"),false);
+        File dir = Config.savePath.isBlank() ? client.runDirectory : new File(Config.savePath);
+        String name = getTimeName() + ".png";
+        new File(dir,"screenshots").mkdirs();
+
+        Window window = client.getWindow();
+        Framebuffer framebuffer = client.getFramebuffer();
+        int oW = window.getFramebufferWidth();
+        int oH = window.getFramebufferHeight();
+
+        int w = Config.quality;
+        int h = Math.round(w * (float) oH / oW);
+        int ss = supersample(Math.max(w,h));
+
+        try {
+            window.setFramebufferWidth(w*ss);
+            window.setFramebufferHeight(h*ss);
+            framebuffer.resize(w*ss,h*ss);
+            client.gameRenderer.renderWorld(RenderTickCounter.ONE);
+            ScreenshotRecorder.saveScreenshot(dir, name, framebuffer, ss, msg -> {});
+        } finally {
+            window.setFramebufferWidth(oW);
+            window.setFramebufferHeight(oH);
+            framebuffer.resize(oW,oH);
+        }
+
+        Text link = Text.literal(name).formatted(Formatting.UNDERLINE).styled(s -> s.withClickEvent(new ClickEvent.OpenFile(new File(dir,"screenshots/" + name))));
+        client.player.sendMessage(Text.literal("[Skyboxer] ").withColor(0x9ac2e7)
+                .append(Text.translatable("screenshot.success",link).withColor(0xFFFFFF)),false);
+    }
+
+    public static int supersample(Integer size) {
+        return size != null ? Math.max(1, Math.min(4, 8192 / Config.quality)) : Config.quality;
+    }
+
+    public static int renderSize() {
+        return Config.quality * supersample(null);
     }
 }
