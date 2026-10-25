@@ -64,17 +64,28 @@ public class Screenshotter {
         int w = Config.quality;
         int h = Math.round(w * (float) oH / oW);
         int ss = supersample(Math.max(w,h));
+        int oS = window.getScaleFactor();
 
+        client.gameRenderer.setBlockOutlineEnabled(false);
         try {
-            window.setFramebufferWidth(w*ss);
-            window.setFramebufferHeight(h*ss);
-            framebuffer.resize(w*ss,h*ss);
-            client.gameRenderer.renderWorld(RenderTickCounter.ONE);
-            ScreenshotRecorder.saveScreenshot(dir, name, framebuffer, ss, msg -> {});
+            window.setFramebufferWidth(w * ss);
+            window.setFramebufferHeight(h * ss);
+            framebuffer.resize(w * ss, h * ss);
+
+            if (Config.renderUI) {
+                window.setScaleFactor(Math.max(1, Math.round(oS * (float) (h * ss) / oH)));
+                client.gameRenderer.render(RenderTickCounter.ONE, true);
+            } else {
+                client.gameRenderer.renderWorld(RenderTickCounter.ONE);
+            }
+
+            ScreenshotRecorder.saveScreenshot(dir, name, framebuffer, ss, message -> {});
         } finally {
             window.setFramebufferWidth(oW);
             window.setFramebufferHeight(oH);
-            framebuffer.resize(oW,oH);
+            window.setScaleFactor(oS);
+            framebuffer.resize(oW, oH);
+            client.gameRenderer.setBlockOutlineEnabled(true);
         }
 
         Text link = Text.literal(name).formatted(Formatting.UNDERLINE).styled(s -> s.withClickEvent(new ClickEvent.OpenFile(new File(dir,"screenshots/" + name))));

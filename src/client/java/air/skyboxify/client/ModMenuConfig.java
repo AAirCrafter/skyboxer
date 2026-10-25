@@ -29,16 +29,23 @@ public class ModMenuConfig implements ModMenuApi {
         );
 
         general.addEntry(
-                entryBuilder.startBooleanToggle(Text.literal("Use viewing direction"), lookDirection)
+                entryBuilder.startTextField(Text.literal("Save-Location"),savePath)
+                        .setDefaultValue("")
+                        .setSaveConsumer(value -> savePath = value)
+                        .build()
+        );
+
+        general.addEntry(
+                entryBuilder.startBooleanToggle(Text.literal("Use viewing direction (3D)"), lookDirection)
                         .setDefaultValue(false)
                         .setSaveConsumer(value -> lookDirection = value)
                         .build()
         );
 
         general.addEntry(
-                entryBuilder.startTextField(Text.literal("Save-Location"),savePath)
-                        .setDefaultValue("")
-                        .setSaveConsumer(value -> savePath = value)
+                entryBuilder.startBooleanToggle(Text.literal("Render UI (2D)"), renderUI)
+                        .setDefaultValue(false)
+                        .setSaveConsumer(value -> renderUI = value)
                         .build()
         );
 
