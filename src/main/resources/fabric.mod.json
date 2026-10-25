@@ -3,7 +3,7 @@
   "id": "skyboxify",
   "version": "${version}",
   "name": "SkyBoxer",
-  "description": "make 3d ingame screenshots to use as a skybox/background",
+  "description": "make high quality and 3d ingame screenshots to use as a skybox/background",
   "custom": {
     "modmenu": {
       "links": {
@@ -36,6 +36,9 @@
     ],
     "main": [
       "air.skyboxify.Skyboxify"
+    ],
+    "modmenu": [
+      "air.skyboxify.client.ModMenuConfig"
     ]
   },
   "mixins": [
@@ -44,9 +47,6 @@
       "config": "skyboxify.client.mixins.json",
       "environment": "client"
     }
-  ],
-  "modmenu": [
-    "air.skyboxify.client.ModMenuConfig"
   ],
   "depends": {
     "fabricloader": "*",

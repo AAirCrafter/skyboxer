@@ -3,5 +3,5 @@ package air.skyboxify;
 public class Config {
     public static boolean lookDirection = false;
     public static int quality = 1080;
-    public static String savePath = "";
+    public static String savePath = "screenshots";
 }

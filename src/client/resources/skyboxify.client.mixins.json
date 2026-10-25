@@ -1,9 +1,10 @@
 {
   "required": true,
   "minVersion": "0.8",
-  "package": "air.skyboxify.mixin.client",
+  "package": "air.skyboxify.client.mixin",
   "compatibilityLevel": "JAVA_21",
   "client": [
+    "MinecraftClientMixin"
   ],
   "injectors": {
     "defaultRequire": 1
