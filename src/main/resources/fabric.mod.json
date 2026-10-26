@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "id": "skyboxify",
+  "id": "skyboxer",
   "version": "${version}",
   "name": "SkyBoxer",
   "description": "make high quality and 3d ingame screenshots to use as a skybox/background",
@@ -18,7 +18,7 @@
   },
   "contact": {
     "homepage": "https://aircrafter.cloud",
-    "issues": "https://github.com/aircordteam/zaheer-issues"
+    "issues": "https://github.com/AAirCrafter/skyboxer/issues"
   },
   "authors": [
     "AAirCrafter",

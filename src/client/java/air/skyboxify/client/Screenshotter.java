@@ -18,6 +18,25 @@ import java.util.Calendar;
 
 public class Screenshotter {
     public static String panoramaFolder = null;
+    public static final int WARMUP_FRAMES = 8;
+    public static final long MAX_CHUNK_WAIT_MS = 3000;
+    public static final int STABLE_FRAMES = 10;
+
+    public static void renderFrames(Runnable frame) {
+        MinecraftClient client = MinecraftClient.getInstance();
+        client.worldRenderer.getChunkRenderingDataPreparer().scheduleTerrainUpdate();
+        long end = System.currentTimeMillis() + MAX_CHUNK_WAIT_MS;
+
+        int i = 0;
+        int stable = 0;
+        while (System.currentTimeMillis() < end) {
+            frame.run();
+            i++;
+            stable = client.worldRenderer.isTerrainRenderComplete() ? stable + 1 : 0;
+            if (i >= WARMUP_FRAMES && stable >= STABLE_FRAMES) break;
+            try { Thread.sleep(5); } catch (InterruptedException ignored) {}
+        }
+    }
 
     public static String getTimeName() {
         Calendar cal = Calendar.getInstance();
@@ -69,21 +88,20 @@ public class Screenshotter {
         try {
             window.setFramebufferWidth(w * ss);
             window.setFramebufferHeight(h * ss);
-            framebuffer.resize(w * ss, h * ss);
+            client.onResolutionChanged();
 
-            if (Config.renderUI) {
-                window.setScaleFactor(Math.max(1, Math.round(oS * (float) (h * ss) / oH)));
-                client.gameRenderer.render(RenderTickCounter.ONE, true);
-            } else {
-                client.gameRenderer.renderWorld(RenderTickCounter.ONE);
-            }
+            if (Config.renderUI) window.setScaleFactor(Math.max(1, Math.round(oS * (float) (h * ss) / oH)));
+
+            renderFrames(() -> {
+                if (Config.renderUI) client.gameRenderer.render(RenderTickCounter.ONE, true);
+                else client.gameRenderer.renderWorld(RenderTickCounter.ONE);
+            });
 
             ScreenshotRecorder.saveScreenshot(dir, name, framebuffer, ss, message -> {});
         } finally {
             window.setFramebufferWidth(oW);
             window.setFramebufferHeight(oH);
-            window.setScaleFactor(oS);
-            framebuffer.resize(oW, oH);
+            client.onResolutionChanged();
         }
 
         Text link = Text.literal(name).formatted(Formatting.UNDERLINE).styled(s -> s.withClickEvent(new ClickEvent.OpenFile(new File(dir,"screenshots/" + name))));
